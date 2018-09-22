@@ -26,6 +26,7 @@ Last updated: 21 September, 2018
 # 4. Input method should be fully automated
 
 from skimage import io
+from sys import argv
 import matplotlib.pyplot as plt
 import numpy as np
 import math
@@ -52,8 +53,8 @@ def get_dir(dir_in):
 def dir_out(dir_in):
     """This makes a new directory '_out' inside the given path."""
     try:
-        os.makedirs(dir_ + '_out/', exist_ok=True)
-        dir_out = (dir_ + '_out/')
+        os.makedirs(dir_ + '_out\\', exist_ok=True)
+        dir_out = (dir_ + '_out\\')
         return dir_out
     except:
         raise IOError(f"Unable to make new directory: {dir_in}")
@@ -92,6 +93,65 @@ def extract_frame(list_of_files):
         # print(f"Reading_file..{file_[-19:]}, image_shape:{img.shape}")
     # t_dict = np.array([np.array(t_dict[key_]) for key_ in t_dict])
     return t_dict
+
+
+def calculate_image(t_dict, t):
+        t_points = (np.arange(len(t_dict.keys())) * t)
+
+        # new_stack_sum = []
+        new_stack_mean = []
+        new_stack_max = []
+
+        list_of_mean_all = []
+        list_of_max_all = []
+        list_of_sum_all = []
+        list_of_sd_all = []
+        list_of_sem_all = []
+
+        print("\nAnalyzing time points...\n")
+
+        for t in t_dict:
+
+            new_stack_t = np.array(t_dict[t])
+
+            list_of_mean = []
+
+            # calculates values for each frame of each time points and lists them
+            #
+            for n in range(len(new_stack_t)):
+                slice_ = new_stack_t[n]
+                slice_ = slice_[slice_ > 0]
+
+                list_of_mean.append(slice_.mean())
+
+            # calculates mean and sd from all the frames(mean) of a time point and makes lists of
+            # the values of each time points
+            list_of_mean_all.append(np.array(list_of_mean).mean())
+            list_of_sd_all.append(np.array(list_of_mean).std())
+            list_of_sem_all.append(
+                np.array(list_of_mean).std()/math.sqrt(len(list_of_files)))
+
+            # listing sum and max values from all the frames of each time points
+            list_of_sum_all.append(new_stack_t.sum())
+            list_of_max_all.append(new_stack_t.max())
+
+            # print(f"Analyzing_time_point-{t+1}")
+
+            # sum_of_stacks = np.sum(new_stack_t, axis=0)
+            max_of_stacks = np.max(new_stack_t, axis = 0)
+            # converts float array to trancated int (eg., 2.9 to 2)
+            mean_of_stacks = np.mean(new_stack_t, axis=0).astype(int)
+        #        mean_of_stacks = np.mean(new_stack, axis = 0).astype(np.float16) # converts 16bit float
+        #        mean_of_stacks = np.rint(np.mean(new_stack, axis = 0)) # rounding float to float
+
+            # new_stack_sum.append(sum_of_stacks)
+            new_stack_mean.append(mean_of_stacks)
+            new_stack_max.append(max_of_stacks)
+
+        # saving the calculated stacks in a csv
+        result_csv = np.array([t_points, list_of_mean_all, list_of_sd_all,
+                               list_of_sem_all, list_of_sum_all, list_of_max_all])
+        return [result_csv, new_stack_mean, new_stack_max]
 
 
 def save_tif(dir_out, list_of_files, result, mode):
@@ -144,97 +204,59 @@ def plot_save_fig(dir_out, filelists, results):
 
 
 if __name__ == "__main__":
-    dir_ = get_dir(input("Directory>"))
-    t = int(input("Time point/interval>"))
 
-    start = time.time()
-    list_of_files = get_filelist(dir_)
-    dir_out = dir_out(dir_)
+    if len(argv) < 2:
+        print("Please define arguments: '-a' for auto, '-m' for manual,  '-t' for test.")
+        exit()
 
-    new_stack_sum = []
-    new_stack_mean = []
-    # new_stack_max = []
+    elif argv[1] == '-a':
+        info_file = open('info.txt')
+        for line in info_file:
+            line = line.split(',')
+            dir_ = get_dir(line[0])
+            t = int(line[1])
+            start = time.time()
+            list_of_files = get_filelist(dir_)
+            print('path:', dir_)
+            dir_out = dir_out(dir_)
+            print(dir_out)
 
-    list_of_mean_all = []
-    list_of_max_all = []    
-    list_of_sum_all = []
-    list_of_sd_all = []
-    list_of_sem_all = []
- 
-    print("\nReading files...\n")
-    
-    t_dict = extract_frame(list_of_files)
+            print("\nReading files...\n")
 
-    # t_points = (np.arange(len(t_dict)) * t)
-    t_points = (np.arange(len(t_dict.keys())) * t)
+            t_dict = extract_frame(list_of_files)
+            new_stack_all = calculate_image(t_dict, t)
 
-    print("\nAnalyzing time points...\n")
+            # saving the resultent stacks in tif_stack
+            save_tif(dir_out, list_of_files, np.array(new_stack_all[2]), 'Max')
+            save_tif(dir_out, list_of_files, np.array(new_stack_all[1]), 'Mean')
+            # save_tif(dir_out, list_of_files, np.array(new_stack_sum, np.uint32), 'Sum')
 
-    for t in t_dict:
+            save_csv(dir_out, list_of_files, new_stack_all[0])
+            plot_save_fig(dir_out, list_of_files, new_stack_all[0])
+    elif argv[1] == '-m':
+        dir_ = get_dir(input("Directory>"))
+        t = int(input("Time point/interval>"))
 
-        new_stack_t = np.array(t_dict[t])
-
-        list_of_mean = []
-
-        # calculates values for each frame of each time points and lists them
-        #
-        for n in range(len(new_stack_t)):
-            slice_ = new_stack_t[n]
-            slice_ = slice_[slice_ > 0]
-
-            list_of_mean.append(slice_.mean())
-
-        # calculates mean and sd from all the frames(mean) of a time point and makes lists of
-        # the values of each time points
-        list_of_mean_all.append(np.array(list_of_mean).mean())
-        list_of_sd_all.append(np.array(list_of_mean).std())
-        list_of_sem_all.append(np.array(list_of_mean).std()/math.sqrt(len(list_of_files)))
-
-        # listing sum and max values from all the frames of each time points
-        list_of_sum_all.append(new_stack_t.sum())
-        list_of_max_all.append(new_stack_t.max())
-
-        # print(f"Analyzing_time_point-{t+1}")
-
-        sum_of_stacks = np.sum(new_stack_t, axis = 0)
-        # max_of_stacks = np.max(new_stack_t, axis = 0)
-        mean_of_stacks = np.mean(new_stack_t, axis = 0).astype(int) # converts float array to trancated int (eg., 2.9 to 2)
-    #        mean_of_stacks = np.mean(new_stack, axis = 0).astype(np.float16) # converts 16bit float
-    #        mean_of_stacks = np.rint(np.mean(new_stack, axis = 0)) # rounding float to float
-
-        new_stack_sum.append(sum_of_stacks)
-        new_stack_mean.append(mean_of_stacks)
-        # new_stack_max.append(max_of_stacks)
-
-    # saving the calculated stacks in a csv
-    result_csv = np.array([t_points, list_of_mean_all, list_of_sd_all, list_of_sem_all, list_of_sum_all, list_of_max_all])
-
-    # saving the resultent stacks in tif_stack
-    # save_tif(dir_out, list_of_files, np.array(new_stack_max), 'Max')
-    save_tif(dir_out, list_of_files, np.array(new_stack_mean), 'Mean')
-    save_tif(dir_out, list_of_files, np.array(new_stack_sum, np.uint32), 'Sum')
-
-    save_csv(dir_out, list_of_files, result_csv)
-    plot_save_fig(dir_out, list_of_files, result_csv)
+        start = time.time()
+        list_of_files = get_filelist(dir_)
+        print(dir_)
+        exit()
+        dir_out = dir_out(dir_)
 
     
+        print("\nReading files...\n")
+        
+        t_dict = extract_frame(list_of_files)
+        new_stack_all = calculate_image(t_dict, t)
 
-# if __name__ == "__main__":
-#     # This will run if no argument is prodived or the argument is not '-a'
-#     if len(sys.argv) < 2 or sys.argv[1] != '-a':
-#         Dir = (input('Directory>') + '\\')
-#     #    Dir = dir.replace('\\', '/')
-#         filelists = get_filelist(Dir)
-#         slice_pos = input('slice_position>')
-#         nfiles = input('How many files to read>')
-#         result = get_max_limited(filelists, slice_pos, nfiles)
-#     #    plt.imshow(result, cmap='gray')
-#     #    plt.show()
-#     elif sys.argv[1] == '-a':
-#         Dir = (input('Directory>') + '\\')
-#         tm_int = int(input('Time interval between frames>'))
-#         filelists = get_filelist(Dir)
-#         results = get_max_all(filelists)
+        # saving the resultent stacks in tif_stack
+        save_tif(dir_out, list_of_files, np.array(new_stack_all[2]), 'Max')
+        save_tif(dir_out, list_of_files, np.array(new_stack_all[1]), 'Mean')
+        # save_tif(dir_out, list_of_files, np.array(new_stack_sum, np.uint32), 'Sum')
 
+        save_csv(dir_out, list_of_files, new_stack_all[0])
+        plot_save_fig(dir_out, list_of_files, new_stack_all[0])
+
+    
 
     print("\nTotal time : ", time.time() - start)
