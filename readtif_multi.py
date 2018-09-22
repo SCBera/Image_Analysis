@@ -151,9 +151,9 @@ if __name__ == "__main__":
     list_of_files = get_filelist(dir_)
     dir_out = dir_out(dir_)
 
-    new_stack_sum = []
+    # new_stack_sum = []
     new_stack_mean = []
-    # new_stack_max = []
+    new_stack_max = []
 
     list_of_mean_all = []
     list_of_max_all = []    
@@ -191,28 +191,28 @@ if __name__ == "__main__":
         list_of_sem_all.append(np.array(list_of_mean).std()/math.sqrt(len(list_of_files)))
 
         # listing sum and max values from all the frames of each time points
-        list_of_sum_all.append(new_stack_t.sum())
+        # list_of_sum_all.append(new_stack_t.sum())
         list_of_max_all.append(new_stack_t.max())
 
         # print(f"Analyzing_time_point-{t+1}")
 
-        sum_of_stacks = np.sum(new_stack_t, axis = 0)
-        # max_of_stacks = np.max(new_stack_t, axis = 0)
+        # sum_of_stacks = np.sum(new_stack_t, axis = 0)
+        max_of_stacks = np.max(new_stack_t, axis = 0)
         mean_of_stacks = np.mean(new_stack_t, axis = 0).astype(int) # converts float array to trancated int (eg., 2.9 to 2)
     #        mean_of_stacks = np.mean(new_stack, axis = 0).astype(np.float16) # converts 16bit float
     #        mean_of_stacks = np.rint(np.mean(new_stack, axis = 0)) # rounding float to float
 
-        new_stack_sum.append(sum_of_stacks)
+        # new_stack_sum.append(sum_of_stacks)
         new_stack_mean.append(mean_of_stacks)
-        # new_stack_max.append(max_of_stacks)
+        new_stack_max.append(max_of_stacks)
 
     # saving the calculated stacks in a csv
     result_csv = np.array([t_points, list_of_mean_all, list_of_sd_all, list_of_sem_all, list_of_sum_all, list_of_max_all])
 
     # saving the resultent stacks in tif_stack
-    # save_tif(dir_out, list_of_files, np.array(new_stack_max), 'Max')
+    save_tif(dir_out, list_of_files, np.array(new_stack_max), 'Max')
     save_tif(dir_out, list_of_files, np.array(new_stack_mean), 'Mean')
-    save_tif(dir_out, list_of_files, np.array(new_stack_sum, np.uint32), 'Sum')
+    # save_tif(dir_out, list_of_files, np.array(new_stack_sum, np.uint32), 'Sum')
 
     save_csv(dir_out, list_of_files, result_csv)
     plot_save_fig(dir_out, list_of_files, result_csv)
