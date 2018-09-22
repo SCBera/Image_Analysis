@@ -79,7 +79,7 @@ def extract_frame(list_of_files):
         if img.shape[0] > 300:
             print('Stack shape is different!')
             exit()
-        elif psutil.virtual_memory()[2] > 80:
+        elif psutil.virtual_memory()[2] > 88:
             print(f'Sytem RAM not sufficient. Stopes after {nfiles} files!')
             break
         else:
@@ -149,7 +149,6 @@ if __name__ == "__main__":
 
     start = time.time()
     list_of_files = get_filelist(dir_)
-    dir_out = dir_out(dir_)
 
     # new_stack_sum = []
     new_stack_mean = []
@@ -169,6 +168,7 @@ if __name__ == "__main__":
     t_points = (np.arange(len(t_dict.keys())) * t)
 
     print("\nAnalyzing time points...\n")
+    dir_out = dir_out(dir_)
 
     for t in t_dict:
 
@@ -191,7 +191,7 @@ if __name__ == "__main__":
         list_of_sem_all.append(np.array(list_of_mean).std()/math.sqrt(len(list_of_files)))
 
         # listing sum and max values from all the frames of each time points
-        # list_of_sum_all.append(new_stack_t.sum())
+        list_of_sum_all.append(new_stack_t.sum())
         list_of_max_all.append(new_stack_t.max())
 
         # print(f"Analyzing_time_point-{t+1}")
@@ -203,10 +203,10 @@ if __name__ == "__main__":
     #        mean_of_stacks = np.rint(np.mean(new_stack, axis = 0)) # rounding float to float
 
         # new_stack_sum.append(sum_of_stacks)
-        new_stack_mean.append(mean_of_stacks)
         new_stack_max.append(max_of_stacks)
+        new_stack_mean.append(mean_of_stacks)
 
-    # saving the calculated stacks in a csv
+    # listing all the calculated values
     result_csv = np.array([t_points, list_of_mean_all, list_of_sd_all, list_of_sem_all, list_of_sum_all, list_of_max_all])
 
     # saving the resultent stacks in tif_stack
@@ -214,8 +214,9 @@ if __name__ == "__main__":
     save_tif(dir_out, list_of_files, np.array(new_stack_mean), 'Mean')
     # save_tif(dir_out, list_of_files, np.array(new_stack_sum, np.uint32), 'Sum')
 
-    save_csv(dir_out, list_of_files, result_csv)
+    # saving the calculated stacks in a csv and figure
     plot_save_fig(dir_out, list_of_files, result_csv)
+    save_csv(dir_out, list_of_files, result_csv)
 
     
 
