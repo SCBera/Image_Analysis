@@ -50,7 +50,7 @@ def get_dir(dir_in):
         exit()     
 
 
-def dir_out(dir_in):
+def make_dir_out(dir_in):
     """This makes a new directory '_out' inside the given path."""
     try:
         os.makedirs(dir_ + '_out\\', exist_ok=True)
@@ -80,7 +80,7 @@ def extract_frame(list_of_files):
         if img.shape[0] > 300:
             print('Stack shape is different!')
             exit()
-        elif psutil.virtual_memory()[2] > 80:
+        elif psutil.virtual_memory()[2] > 88:
             print(f'Sytem RAM not sufficient. Stopes after {nfiles} files!')
             break
         else:
@@ -206,20 +206,22 @@ def plot_save_fig(dir_out, filelists, results):
 if __name__ == "__main__":
 
     if len(argv) < 2:
-        print("Please define arguments: '-a' for auto, '-m' for manual,  '-t' for test.")
+        print("Please define arguments: '-a' for auto, '-m' for manual.")
         exit()
 
     elif argv[1] == '-a':
+
         info_file = open('info.txt')
         for line in info_file:
+
+            start = time.time()
+
             line = line.split(',')
             dir_ = get_dir(line[0])
             t = int(line[1])
-            start = time.time()
             list_of_files = get_filelist(dir_)
-            print('path:', dir_)
-            dir_out = dir_out(dir_)
-            print(dir_out)
+            dir_out = make_dir_out(dir_) # better not to reuse variable names which are same with any function name!
+            # that may cause "TypeError: 'str' object is not callable" error.
 
             print("\nReading files...\n")
 
@@ -233,19 +235,24 @@ if __name__ == "__main__":
 
             save_csv(dir_out, list_of_files, new_stack_all[0])
             plot_save_fig(dir_out, list_of_files, new_stack_all[0])
+
+            # this erase the existing memory or frees the RAM
+            t_dict = 0
+            
+            print("\nTime required(sec): ", time.time() - start)
+           
+
     elif argv[1] == '-m':
         dir_ = get_dir(input("Directory>"))
         t = int(input("Time point/interval>"))
 
         start = time.time()
         list_of_files = get_filelist(dir_)
-        print(dir_)
-        exit()
+
+        print("\nReading files...\n")
+
         dir_out = dir_out(dir_)
 
-    
-        print("\nReading files...\n")
-        
         t_dict = extract_frame(list_of_files)
         new_stack_all = calculate_image(t_dict, t)
 
@@ -259,4 +266,4 @@ if __name__ == "__main__":
 
     
 
-    print("\nTotal time : ", time.time() - start)
+    print("\nTotal time required(sec): ", time.time() - start)
