@@ -210,11 +210,12 @@ if __name__ == "__main__":
         exit()
 
     elif argv[1] == '-a':
+        start_1 = time.time()
 
         info_file = open('info.txt')
         for line in info_file:
 
-            start = time.time()
+            start_2 = time.time()
 
             line = line.split(',')
             dir_ = get_dir(line[0])
@@ -223,7 +224,7 @@ if __name__ == "__main__":
             dir_out = make_dir_out(dir_) # better not to reuse variable names which are same with any function name!
             # that may cause "TypeError: 'str' object is not callable" error.
 
-            print("\nReading files...\n")
+            print(f"\nReading files from..{dir_[40:]}\n")
 
             t_dict = extract_frame(list_of_files)
             new_stack_all = calculate_image(t_dict, t)
@@ -239,19 +240,19 @@ if __name__ == "__main__":
             # this erase the existing memory or frees the RAM
             t_dict = 0
             
-            print("\nTime required(sec): ", time.time() - start)
+            print("\nTime required(sec): ", time.time() - start_2)
            
 
     elif argv[1] == '-m':
         dir_ = get_dir(input("Directory>"))
         t = int(input("Time point/interval>"))
 
-        start = time.time()
+        start_1 = time.time()
         list_of_files = get_filelist(dir_)
 
         print("\nReading files...\n")
 
-        dir_out = dir_out(dir_)
+        dir_out = make_dir_out(dir_)
 
         t_dict = extract_frame(list_of_files)
         new_stack_all = calculate_image(t_dict, t)
@@ -266,4 +267,4 @@ if __name__ == "__main__":
 
     
 
-    print("\nTotal time required(sec): ", time.time() - start)
+    print("\nTotal time required(sec): ", time.time() - start_1)

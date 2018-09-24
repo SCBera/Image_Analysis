@@ -1,0 +1,27 @@
+Z:\Subh@s\Real-time experiments\AB42-rec\2018-02-26_on_glass_PBS-Azd-buffer_30mins_UC\AB42-rec_UC_on_glass_PBS-Azd_30min_1,30
+Z:\Subh@s\Real-time experiments\AB42-rec\2018-03-01_on_glass_PBS-Azd-buffer_15mins_AB647\AB42-re+AB647_on_glass_PBS-Azd_15min_7x7-pos_1,15
+Z:\Subh@s\Real-time experiments\AB42-rec\2018-03-03_on_glass_PBS-Azd-buffer_30mins_ApoE647\5uM-AB42-re_20nM-E4-647_on_glass_PBS-Azd_7x7-pos_30mins_1,30
+Z:\Subh@s\Real-time experiments\AB42-rec\2018-03-07_on_glass_PBS-Azd_New-AB42-rec+AF488_15mins\5.6-uM_AB42-rec+0.2uM_AF488_NEW_7x7-pos_15mins_1,15
+Z:\Subh@s\Real-time experiments\AB42-rec\2018-03-10_on_glass_PBS-Azd_2x-AB42-rec+AF488_15mins\11uM_AB42-rec+0.2uM_AF488_7x7_pos_15mins_1,15
+Z:\Subh@s\Real-time experiments\AB42-rec\2018-03-14_on_glass_PBS-mix_AB42-rec+AF488-half-C_30'C_15min\2.5uM_AB42-rec+0.1uM_AF488_10x10_pos_30-C_15min_1,15
+Z:\Subh@s\Real-time experiments\AB42-rec\2018-03-16_on_glass_PBS-mix_5um_AB42-rec+0.2uM-AF488_30'C_15min-rpt\5.6uM_AB42-rec+0.2uM_AF488_7x7_pos_30-C_15min-intrvl_1,15
+Z:\Subh@s\Real-time experiments\AB42-rec\2018-03-19_RU-glass_PBS-mix_5um_AB42-rec+0.2uM-AF488_25C_15min-rpt\5.6uM_AB42-rec+0.2uM_AF488_7x7_pos1_25C_after1hr_15mins_1,15
+Z:\Subh@s\Real-time experiments\AB42-rec\2018-03-21_glass_PBS-mix_5um_AB42-rec+0.2uM-AF488_30C_15min\5.6uM_AB42-rec+0.2uM_AF488_10x10-pos_25C_after2hr_2,15
+Z:\Subh@s\Real-time experiments\AB42-rec\2018-03-26_glass_PBS-mix_5um_AB42-rec+0.2uM-AF488_SLB_25C_15min\5.6uM_AB40-rec+0.2uM_AF488_SLB_10x10-pos_25C_15min_1,15
+Z:\Subh@s\Real-time experiments\AB42-rec\2018-03-29_glass_PBS-mix_10um_AB42-rec+0.4uM-AF488_SLB_25C_15min\11uM_AB42-rec+0.4uM_AF488_SLB_10x10--pos_25C_15mins-int_1,15
+Z:\Subh@s\Real-time experiments\AB42-rec\2018-04-05_glass_PBS-mix_10um_AB42-rec+0.4uM-AF488_SLB_25C_20min\11uM_AB40-rec+0.4uM_AF488_SLB_10x10-pos_25C_20min_1,20
+Z:\Subh@s\Real-time experiments\AB42-rec\2018-04-09_glass_PBS-mix_10uM-AB42-rec+0.4uM-AF488_SLB_25C_30min\11uM_AB42-rec+0.4uM_AF488_SLB_10x10-pos_25C_20min_1,20
+
+Z:\Subh@s\Real-time experiments\AB42-rec\2018-04-24_on_glass_PBS-mix_5uM-AB42-rec_0.2uM-AF647_25C_15min\5uM-AB42-rec_0.2uM-AF647_25C_15min_1,15
+Z:\Subh@s\Real-time experiments\AB42-rec\2018-04-27_on_glass_PBS-mix_5uM-AB42-rec_0.2uM-AF647_25C_15min\5uM-AB42-rec_0.2uM-AF647_10x10-pos_25C_15min_1,15
+Z:\Subh@s\Real-time experiments\AB42-rec\2018-04-29_on_glass_PBS-mix_5uM-AB42-rec_0.2uM-AF488-647-mix_25C_15min\5uM-AB42-rec_0.2uM-AF488-647_7x7-pos_25C_15min_1,15
+Z:\Subh@s\Real-time experiments\AB42-rec\2018-05-01_on_glass_PBS-Azd_5uM-AB42-rec_0.2uM-AF488_25C_15min\5uM-AB42-rec_0.2uM-AF488_7x7-pos_25C_15min_1,15
+Z:\Subh@s\Real-time experiments\AB42-rec\2018-05-04_on_glass_PBS-Azd_10uM-AB42-rec_0.4uM-AF488_25C_15min\10uM-AB42-rec_0.4uM-AF488_7x7-pos_25C_15min_1,15
+Z:\Subh@s\Real-time experiments\AB42-rec\2018-05-06_on_glass_PBS-Azd_10uM-AB42-rec_0.4uM-AF488_HC_15min\10uM-AB42-rec_0.4uM-AF488_7x7-pos_HC_15min_1,15
+Z:\Subh@s\Real-time experiments\AB42-rec\2018-05-07_on_glass_PBS-Azd_NEW_5uM-AB42-rec_0.2uM-AF488_25C_15min\NW-5uM-AB42-rec_0.2uM-AF488_7x7-pos_25C_15min_1,15
+Z:\Subh@s\Real-time experiments\AB42-rec\2018-05-15_on_glass-CG-HCl_PBS-Azd_5uM-AB42-rec_0.2uM-AF647_25C_15min\5uM-AB42-rec_0.2uM-AF647_7x7-pos_15min_1,15
+Z:\Subh@s\Real-time experiments\AB42-rec\2018-05-17_on_glass_PBS-Azd_7.5uM-AB42-rec_0.8uM-AF488_25C_15min\7.5uM-AB42-rec_0.8uM-AF488_7x7-pos_15min_1,15
+Z:\Subh@s\Real-time experiments\AB42-rec\2018-05-18_on_glass_PBS-Azd_15uM-AB42-rec_0.8uM-AF488_25C_15min\15uM-AB42-rec_0.8uM-AF488_7x7-pos_15min_1,15
+Z:\Subh@s\Real-time experiments\AB42-rec\2018-05-23_on_glass_PBS-Azd_10uM-AB42-rec_4uM-ThT_25C_15min\10uM-AB42-rec_4uM-ThT_7x7-pos_15min_1,15
+Z:\Subh@s\Real-time experiments\AB42-rec\2018-06-12_on_glass_PBS-Azd_5uM-AB42-rec_1uM-IFABP_4uM-ThT_25C_30min\5uM-AB42-rec_1uM-IFABP_4uM-ThT_25C_30min_1,30
+Z:\Subh@s\Real-time experiments\AB42-rec\2018-06-21_on_glass_PBS-Azd_10uM-AB42-rec_0.2uM-AB647_25C_15min\10uM-AB42-rec_0.2uM-AB647_25C_15min_1,15
