@@ -1,21 +1,21 @@
 # -*- coding: utf-8 -*-
 """
 This code reads ".tif" files/stacks from given directory (excluding the first file).
-Extracts slices from stacks and make a MAX projection of the slices.
-Save it in a separate folder inside destination folder.
+Extracts slices from stacks and process them to get...
+MAX and mean projection of the slices.
+Calculate the means, SD, SEM, MAX, SUM value and make array
+Save them in a separate folder inside destination folder.
 
 
 Inputs requires during run:
-script -a for automatic mode then files derectory
-
-script -(anything) for manual mode then files derectory that must end with '\' and
-position of the slice/stack need be extracted, number of files to be read.
+script -a for automatic mode which will read files and time interval from info.txt file
+script -m for manual input of directory and time interval
 
 The code is mostly adopted from:http://www.bioimgtutorials.com/2016/08/03/creating-a-z-stack-in-python/
 Runs in 64bit environment with Python3 (64bit), scikit image, numpy, psutil, math, glob, matplotlib.pyplot
 Author: Subhas Ch Bera (and Kesavan)
 Created on Tue Sep 18 09:02:20 2018
-Last updated: 21 September, 2018
+Last updated: 28 September, 2018
 
 """
 
@@ -96,7 +96,7 @@ def extract_frame(list_of_files):
 
 
 def calculate_image(t_dict, t):
-        t_points = (np.arange(len(t_dict.keys())) * t)
+        t_points = (np.arange(len(t_dict.keys())) * (t/60))
 
         # new_stack_sum = []
         new_stack_mean = []
@@ -169,7 +169,7 @@ def save_csv(dir_out, list_of_files, result):
     """This will save resultant values in the output folder as a '.csv' format"""
     try:
         np.savetxt(f"{dir_out}_results_from_{len(list_of_files)}-files.csv",
-                   result.T, delimiter=",", header='Time, Avrg_int, SD, SE, Sum_int, Max_int')
+                   result.T, delimiter=",", header='Time(h), Avrg_int, SD, SE, Sum_int, Max_int')
     except:
         print("Existing csv file is not accessible!")
         exit()
@@ -181,7 +181,7 @@ def plot_save_fig(dir_out, filelists, results):
         fig = plt.figure()
         plt.errorbar(results[0], results[1], yerr = results[2], fmt='rs-', linewidth=2, markersize=5, figure = fig)
         plt.title('Avrg_int_with_time, SD', fontsize=12)
-        plt.xlabel('Time (min)', fontsize=12)
+        plt.xlabel('Time (h)', fontsize=12)
         plt.ylabel('Average Int, (Gray value)', fontsize=12)
         plt.savefig(f"{dir_out}_avrg_int_with_SD_from_{len(filelists)}-files.png")
         # plt.show()
@@ -190,7 +190,7 @@ def plot_save_fig(dir_out, filelists, results):
         fig = plt.figure()
         plt.errorbar(results[0], results[1], yerr = results[3], fmt='rs-', linewidth=2, markersize=5, figure = fig)
         plt.title('Avrg_int_with_time, SEM', fontsize=12)
-        plt.xlabel('Time (min)', fontsize=12)
+        plt.xlabel('Time (h)', fontsize=12)
         plt.ylabel('Average Int, (Gray value)', fontsize=12)
         plt.savefig(f"{dir_out}_avrg_int_with_SE_from_{len(filelists)}-files.png")
         # plt.show()
