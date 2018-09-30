@@ -141,11 +141,11 @@ def calculate_image(t_dict, t):
             list_of_max_all.append(new_stack_t.max())
 
             # print(f"Analyzing_time_point-{t+1}")
-
+            files_to_project = 30
             # sum_of_stacks = np.sum(new_stack_t, axis=0)
-            max_of_stacks = np.max(new_stack_t, axis = 0)
+            max_of_stacks = np.max(new_stack_t[:files_to_project], axis = 0)
             # converts float array to trancated int (eg., 2.9 to 2)
-            mean_of_stacks = np.mean(new_stack_t, axis=0).astype(int)
+            mean_of_stacks = np.mean(new_stack_t[:files_to_project], axis=0).astype(int)
             # mean_of_stacks = np.mean(new_stack, axis = 0).astype(np.float16) # converts 16bit float
             # mean_of_stacks = np.rint(np.mean(new_stack, axis = 0)) # rounding float to float
 
@@ -237,8 +237,8 @@ if __name__ == "__main__":
             new_stack_all = calculate_image(t_dict, t)
 
             # saving the resultent stacks in tif_stack
-            save_tif(dir_out, no_of_files_analysed, np.array(new_stack_all[2]), 'Max')
-            save_tif(dir_out, no_of_files_analysed, np.array(new_stack_all[1]), 'Mean')
+            save_tif(dir_out, '30', np.array(new_stack_all[2]), 'Max')
+            save_tif(dir_out, '30', np.array(new_stack_all[1]), 'Mean')
             # save_tif(dir_out, list_of_files, np.array(new_stack_sum, np.uint32), 'Sum')
 
             save_csv(dir_out, no_of_files_analysed, new_stack_all[0])
@@ -261,15 +261,20 @@ if __name__ == "__main__":
 
         dir_out = make_dir_out(dir_)
 
-        t_dict = extract_frame(list_of_files)
+        t_dict = extract_frame(list_of_files)[0]
+
         no_of_files_analysed = extract_frame(list_of_files)[1]
+        if no_of_files_analysed > 30:
+            no_of_files_analysed_stack = 30
+        else:
+            no_of_files_analysed_stack = no_of_files_analysed
 
 
         new_stack_all = calculate_image(t_dict, t)
 
         # saving the resultent stacks in tif_stack
-        save_tif(dir_out, no_of_files_analysed, np.array(new_stack_all[2]), 'Max')
-        save_tif(dir_out, no_of_files_analysed, np.array(new_stack_all[1]), 'Mean')
+        save_tif(dir_out, no_of_files_analysed_stack, np.array(new_stack_all[2]), 'Max')
+        save_tif(dir_out, no_of_files_analysed_stack, np.array(new_stack_all[1]), 'Mean')
         # save_tif(dir_out, list_of_files, np.array(new_stack_sum, np.uint32), 'Sum')
 
         save_csv(dir_out, no_of_files_analysed, new_stack_all[0])
