@@ -38,8 +38,9 @@ import time
 
 
 
-def get_dir(dir_in):
+def get_dir(dir_in='Sample_stack'):
     """This checks the path of the files provided."""
+    print(dir_in)
 
     if os.path.isdir(dir_in) == True:
         dir_ = dir_in + "\\"
@@ -77,13 +78,17 @@ def extract_frame(list_of_files):
         img = io.imread(file_)
         nfiles += 1
 
-        if img.shape[0] > 300:
-            print('Stack shape is different!')
-            exit()
-        elif psutil.virtual_memory()[2] > 88:
+        
+        if psutil.virtual_memory()[2] > 88:
             print(f'Sytem RAM not sufficient. Stopes after {nfiles} files!')
             break
-        else:
+        elif img.shape[0] > 300: # this analyzes the stack with shape: (y,x,z)
+            for slice_t in range(img.shape[2]):
+                if slice_t not in t_dict:
+                    t_dict[slice_t] = [img[:, :, slice_t]]
+                else:
+                    t_dict[slice_t].append(img[:, :, slice_t])
+        else: # this analyzes the stack with shape: (z,y,x)
             for slice_t in range(img.shape[0]):
                 if slice_t not in t_dict:
                     t_dict[slice_t] = [img[slice_t]]
@@ -92,7 +97,7 @@ def extract_frame(list_of_files):
 
         # print(f"Reading_file..{file_[-19:]}, image_shape:{img.shape}")
     # t_dict = np.array([np.array(t_dict[key_]) for key_ in t_dict])
-    return t_dict
+    return t_dict, nfiles
 
 
 def calculate_image(t_dict, t):
@@ -141,8 +146,8 @@ def calculate_image(t_dict, t):
             max_of_stacks = np.max(new_stack_t, axis = 0)
             # converts float array to trancated int (eg., 2.9 to 2)
             mean_of_stacks = np.mean(new_stack_t, axis=0).astype(int)
-        #        mean_of_stacks = np.mean(new_stack, axis = 0).astype(np.float16) # converts 16bit float
-        #        mean_of_stacks = np.rint(np.mean(new_stack, axis = 0)) # rounding float to float
+            # mean_of_stacks = np.mean(new_stack, axis = 0).astype(np.float16) # converts 16bit float
+            # mean_of_stacks = np.rint(np.mean(new_stack, axis = 0)) # rounding float to float
 
             # new_stack_sum.append(sum_of_stacks)
             new_stack_mean.append(mean_of_stacks)
@@ -154,10 +159,10 @@ def calculate_image(t_dict, t):
         return [result_csv, new_stack_mean, new_stack_max]
 
 
-def save_tif(dir_out, list_of_files, result, mode):
+def save_tif(dir_out, no_of_files, result, mode):
     """This will save resultant frame or stack in the output folder as '.tif' format"""
     try:
-        path = f"{dir_out}{mode}_from_{len(list_of_files)}-files.tif"
+        path = f"{dir_out}{mode}_from_{no_of_files}-files.tif"
         io.imsave(path, result)
     except:
         # raise error here.
@@ -165,17 +170,17 @@ def save_tif(dir_out, list_of_files, result, mode):
         exit()
 
 
-def save_csv(dir_out, list_of_files, result):
+def save_csv(dir_out, no_of_files, result):
     """This will save resultant values in the output folder as a '.csv' format"""
     try:
-        np.savetxt(f"{dir_out}_results_from_{len(list_of_files)}-files.csv",
+        np.savetxt(f"{dir_out}_results_from_{no_of_files}-files.csv",
                    result.T, delimiter=",", header='Time(h), Avrg_int, SD, SE, Sum_int, Max_int')
     except:
         print("Existing csv file is not accessible!")
         exit()
 
 
-def plot_save_fig(dir_out, filelists, results):
+def plot_save_fig(dir_out, no_of_files, results):
     """This will plot figure according to the results and saves the figure in the output folder as a '.png' format"""
     try:
         fig = plt.figure()
@@ -183,7 +188,7 @@ def plot_save_fig(dir_out, filelists, results):
         plt.title('Avrg_int_with_time, SD', fontsize=12)
         plt.xlabel('Time (h)', fontsize=12)
         plt.ylabel('Average Int, (Gray value)', fontsize=12)
-        plt.savefig(f"{dir_out}_avrg_int_with_SD_from_{len(filelists)}-files.png")
+        plt.savefig(f"{dir_out}_avrg_int_with_SD_from_{no_of_files}-files.png")
         # plt.show()
         # plt.close()
 
@@ -192,7 +197,7 @@ def plot_save_fig(dir_out, filelists, results):
         plt.title('Avrg_int_with_time, SEM', fontsize=12)
         plt.xlabel('Time (h)', fontsize=12)
         plt.ylabel('Average Int, (Gray value)', fontsize=12)
-        plt.savefig(f"{dir_out}_avrg_int_with_SE_from_{len(filelists)}-files.png")
+        plt.savefig(f"{dir_out}_avrg_int_with_SE_from_{no_of_files}-files.png")
         # plt.show()
         # plt.close()
 
@@ -226,16 +231,18 @@ if __name__ == "__main__":
 
             print(f"\nReading files from..{dir_[40:]}\n")
 
-            t_dict = extract_frame(list_of_files)
+            t_dict = extract_frame(list_of_files)[0]
+            no_of_files_analysed = extract_frame(list_of_files)[1]
+
             new_stack_all = calculate_image(t_dict, t)
 
             # saving the resultent stacks in tif_stack
-            save_tif(dir_out, list_of_files, np.array(new_stack_all[2]), 'Max')
-            save_tif(dir_out, list_of_files, np.array(new_stack_all[1]), 'Mean')
+            save_tif(dir_out, no_of_files_analysed, np.array(new_stack_all[2]), 'Max')
+            save_tif(dir_out, no_of_files_analysed, np.array(new_stack_all[1]), 'Mean')
             # save_tif(dir_out, list_of_files, np.array(new_stack_sum, np.uint32), 'Sum')
 
-            save_csv(dir_out, list_of_files, new_stack_all[0])
-            plot_save_fig(dir_out, list_of_files, new_stack_all[0])
+            save_csv(dir_out, no_of_files_analysed, new_stack_all[0])
+            plot_save_fig(dir_out, no_of_files_analysed, new_stack_all[0])
 
             # this erase the existing memory or frees the RAM
             t_dict = 0
@@ -255,15 +262,18 @@ if __name__ == "__main__":
         dir_out = make_dir_out(dir_)
 
         t_dict = extract_frame(list_of_files)
+        no_of_files_analysed = extract_frame(list_of_files)[1]
+
+
         new_stack_all = calculate_image(t_dict, t)
 
         # saving the resultent stacks in tif_stack
-        save_tif(dir_out, list_of_files, np.array(new_stack_all[2]), 'Max')
-        save_tif(dir_out, list_of_files, np.array(new_stack_all[1]), 'Mean')
+        save_tif(dir_out, no_of_files_analysed, np.array(new_stack_all[2]), 'Max')
+        save_tif(dir_out, no_of_files_analysed, np.array(new_stack_all[1]), 'Mean')
         # save_tif(dir_out, list_of_files, np.array(new_stack_sum, np.uint32), 'Sum')
 
-        save_csv(dir_out, list_of_files, new_stack_all[0])
-        plot_save_fig(dir_out, list_of_files, new_stack_all[0])
+        save_csv(dir_out, no_of_files_analysed, new_stack_all[0])
+        plot_save_fig(dir_out, no_of_files_analysed, new_stack_all[0])
 
     
 
