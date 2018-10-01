@@ -231,8 +231,9 @@ if __name__ == "__main__":
 
             print(f"\nReading files from..{dir_[40:]}\n")
 
-            t_dict = extract_frame(list_of_files)[0]
-            no_of_files_analysed = extract_frame(list_of_files)[1]
+            result_out = extract_frame(list_of_files)
+            t_dict = result_out[0]
+            no_of_files_analysed = result_out[1]
 
             new_stack_all = calculate_image(t_dict, t)
 
@@ -261,9 +262,10 @@ if __name__ == "__main__":
 
         dir_out = make_dir_out(dir_)
 
-        t_dict = extract_frame(list_of_files)[0]
+        result_out = extract_frame(list_of_files)
+        t_dict = result_out[0]
+        no_of_files_analysed = result_out[1]
 
-        no_of_files_analysed = extract_frame(list_of_files)[1]
         if no_of_files_analysed > 30:
             no_of_files_analysed_stack = 30
         else:
