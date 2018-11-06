@@ -1,135 +1,179 @@
+# -*- coding: utf-8 -*-
 """
-This code provides (.csv and plot) average intesity (gray value) of  slices fromm ".tif" stacks
-from given directory (excluding the first file).
-
-Can also extracts slices from stacks and make a MAX projection of the slices.
-Save it in a separate folder inside destination folder.
+This code reads ".tif" files/stacks from given directory (excluding the first file).
+Extracts slices from stacks and process them to get...
+MAX and mean projection of the slices.
+Calculate the means, SD, SEM, MAX, SUM value and make array
+Save them in a separate folder inside destination folder.
 
 
 Inputs requires during run:
-'script -a' for automatic mode then files derectory
-
-'script -(anything)' for manual mode
-then files derectory, position of the slice/stack need be analyzed and number of files to be read.
+script -a for automatic mode which will read files and time interval from info.txt file
+script -m for manual input of directory and time interval
 
 The code is mostly adopted from:http://www.bioimgtutorials.com/2016/08/03/creating-a-z-stack-in-python/
-Runs in 64bit environment with Python3 (32/64bit), scikit image, numpy, matplotlib.pyplot, glob
-Author: Subhas Ch Bera
-Last updated: 16 September, 2018.
+Runs in 64bit environment with Python3 (64bit), scikit image, numpy, psutil, math, glob, matplotlib.pyplot
+Author: Subhas Ch Bera (and Kesavan)
+Created on Tue Sep 18 09:02:20 2018
+Last updated: 28 September, 2018
+
 """
+
+# To Do:
+# 1. Use decorators to decorate functions that need to raise IOError.
+# 2. Matplotlib, use the fig, ax syntax. Not the plt state function.
+# 3. Rewrite the part of the code that requires empty array creation - instead append to a list and convert into an array.
+# 4. Input method should be fully automated
+
 from skimage import io
+from sys import argv
 import matplotlib.pyplot as plt
 import numpy as np
+import math
 import os
-import glob
 import sys
+import glob
+import psutil
+import time
 
-# This gets the lists of files in the directory given excluding the first file
-def get_filelist(Dir, filetype='*.tif'):
-    files = glob.glob(Dir+filetype)
-    del files[0] # deletes first file form the list
-    files_mod = files
-    return files_mod
 
-# This function gives average intesity of all the slices of same time point
-# from all the files in the above list of files
-def get_max_all(filelists):
-    img = io.imread(filelists[0])    
-    mean_all_tm_points = []
-    std_all_tm_points = []
-    tm_points =[]
 
-    if len(img.shape) < 3:
-        print('\nImage is not a stack! Please choose a stack of images.')
-        result = img
-        return result
+def get_dir(dir_in):
+    """This checks the path of the files provided."""
+
+    if os.path.isdir(dir_in) == True:
+        dir_ = dir_in + "\\"
+        return dir_
     else:
-        for slice in range(0, img.shape[0]):
-            mean = []
-            slice_tm = slice*tm_int
-            for n in range(0, len(filelists)):
-                img = io.imread(filelists[n])
-                new_img = (img[slice])
-                filename = ((filelists[n])[(len(filelists[0])-20):])
-                print(f"Reading slice-{slice+1} of file ..{filename}")
-                img_mean = new_img.mean()  # gets the mean intensity of image
-                # print("img_mean:", img_mean)
-                mean.append(img_mean)
-                # print("mean:", mean)
-            mean_all = np.array([mean])
-            # print("mean_all:", mean_all)
-            tm_points.append(slice_tm)
-            mean_all_tm_points.append(mean_all.mean())
-            # print("mean_all_tm-pnt:", mean_all_tm_points)
-            std_all_tm_points.append(mean_all.std())
-                    
-        results = np.array([tm_points, mean_all_tm_points, std_all_tm_points])
-        try:
-            os.makedirs(Dir+'Processed/', exist_ok=True)
-            np.savetxt(f"{Dir}Processed/Results_from_{len(filelists)}-files.csv",
-                       results.T, delimiter=",", header='Time, Avrg_int, YError')
-            #np.savetxt(Dir+'Processed/' + 'Results.csv', (tm_points, mean_all_tm_points, std_all_tm_points),
-            #                   delimiter=",", header='Time, Avrg_int, YError')
-        except:
-            print("Existing results file is not accessible!")
-    return results
+        # raise IOError(f"No such directory found: {dir_in}")
+        print(f"No such directory found: {dir_in}")
+        exit()
 
-# This function gives average intesity of selected slice of a time point
-# from selected/all the files in the above list of files
-def get_max_limited(filelists, slice_pos, nfiles):
-    img = io.imread(filelists[0])
+
+def make_dir_out(dir_in):
+    """This makes a new directory '_out' inside the given path."""
+    try:
+        os.makedirs(dir_ + '_out\\', exist_ok=True)
+        dir_out = (dir_ + '_out\\')
+        return dir_out
+    except:
+        raise IOError(f"Unable to make new directory: {dir_in}")
+
+
+def get_filelist(dir_, filetype='*.tif'):
+    """This gets the lists of files in the directory given (excluding the first file)
+    """
+    files = glob.glob(dir_ + filetype)
+    # return files[1:] # returns fileslist except the 1st file
+    return files
+
+
+def extract_frames_single_file(file_):
+    """This reads .. """
+
+    t_dict_single = {}
+        
+    stack = io.imread(file_)
+    
+    print("reading slices...")
+
+    if psutil.virtual_memory()[2] > 88:
+        print(f'Sytem RAM not sufficient!')
+    elif stack.shape[0] > 300: # this analyzes the stack with shape: (y,x,z)
+        for slice_t in range(stack.shape[2]):
+                t_dict_single[slice_t] = [stack[:, :, slice_t]]
+    else: # this analyzes the stack with shape: (z,y,x)
+        for slice_t in range(stack.shape[0]):
+                t_dict_single[slice_t] = [stack[slice_t]]
+
+    return t_dict_single
+
+
+def calculate_mean(t_dict):
+
     mean = []
-    if len(img.shape) < 3:
-        print('\nImage is not a stack! Please choose a stack of images.')
-        result = img
-        return result
-    else:
-        if slice_pos.lower() != 'all' and nfiles.lower() == 'all':
-            for n in range(0, len(filelists)):
-                img = io.imread(filelists[n])
-                new_img = (img[int(slice_pos)-1])
-                filename = ((filelists[n])[(len(filelists[0])-20):])
-                print(f"Reading slice-{slice_pos} of file '...{filename}'")
-                img_mean = new_img.mean()  # gets the mean intensity of image
-                mean.append(img_mean)
-            mean_all = np.array([mean])
-            results = [mean_all.mean(), mean_all.std()]
+    for t in t_dict:
+        slice_ = np.array(t_dict[t])
+        mean.append(slice_.mean())
+
+    return mean
 
 
-        elif slice_pos.lower() != 'all' and nfiles.lower() != 'all':
-            for n in range(0, int(nfiles)):
-                img = io.imread(filelists[n])
-                new_img = (img[int(slice_pos)-1]) #counting starts from 0 in python
-                filename = ((filelists[n])[(len(filelists[0])-20):])
-                print(f"Reading slice-{slice_pos} of file '...{filename}'")
-                img_mean = new_img.mean()  # gets the mean intensity of image
-                mean.append(img_mean)
-            mean_all = np.array([mean])
-            results = [mean_all.mean(), mean_all.std()]
-    return results
+def save_csv(dir_out, files, result):
+    """This will save resultant values in the output folder as a '.csv' format"""
+    try:
+        np.savetxt(f"{dir_out}_Individual_mean_of_{len(files)}-files.csv",
+                   result.T, delimiter=",", header=f'{files}')
+                #    result.T, delimiter=",", header=no_of_files)
+    except:
+        print("Existing csv file is not accessible!")
+        exit()
 
-# This will run if no argument is prodived or the argument is not '-a'
-if len(sys.argv) < 2 or sys.argv[1] != '-a':
-    Dir = (input('Directory>') + '\\')
-    filelists = get_filelist(Dir)
-    slice_pos = input('slice_position>')
-    nfiles = input('How many files to read>')
-    results = get_max_limited(filelists, slice_pos, nfiles)
-    print(results)
-elif sys.argv[1] == '-a':
-    Dir = (input('Directory>') + '\\')
-    tm_int = int(input('Time interval between frames>'))
-    filelists = get_filelist(Dir)
-    results = get_max_all(filelists)
 
-    fig = plt.figure()
-    plt.errorbar(results[0], results[1], yerr = results[2], fmt='rs-', linewidth=2, markersize=5, figure = fig)
-    plt.title('Avrg_int_with_time', fontsize=12)
-    plt.xlabel('Time (min)', fontsize=12)
-    plt.ylabel('Average Int, (Gray value)', fontsize=12)
-    plt.savefig(f"{Dir}Processed/Results_from_{len(filelists)}-files.png")
-    plt.show()
-    #fig.close()
-    plt.close("all")
+if __name__ == "__main__":
 
-#    print(results[0])
+    if len(argv) < 2:
+        print("Please specify arguments: '-a' for auto, '-m' for manual.")
+        exit()
+
+    elif argv[1] == '-a':
+        start_1 = time.time()
+
+        info_file = open('info.txt')
+        for line in info_file:
+
+            start_2 = time.time()
+
+            # line = line.split(',')
+            dir_ = get_dir(line[:-1])
+            # t = int(line[1])
+            list_of_files = get_filelist(dir_)
+            print(f"\nReading {len(list_of_files)} files from '{dir_[-50:]}'\n")
+
+            dir_out = make_dir_out(dir_) # better not to reuse variable names which are same with any function name!
+            # that may cause "TypeError: 'str' object is not callable" error.
+
+            mean_all = []
+            header_all = []
+            for file_ in list_of_files[:]:
+                t_dict = extract_frames_single_file(file_)
+                mean = calculate_mean(t_dict)
+                mean_all.append(mean)
+
+                header_all.append(file_[-21:])
+            
+            result = np.array(mean_all)
+
+            save_csv(dir_out, header_all, result)
+            
+            # t_dict = 0
+            
+            print("\nTime required(sec): ", time.time() - start_2)
+           
+
+    elif argv[1] == '-m':
+        dir_ = get_dir(input("Directory>"))
+        # t = int(input("Time point/interval>"))
+
+        start_1 = time.time()
+        list_of_files = get_filelist(dir_)
+
+        print(f"\nReading {len(list_of_files)} files...\n")
+
+        dir_out = make_dir_out(dir_)
+
+        mean_all = []
+        header_all = []
+        for file_ in list_of_files[:]:
+            t_dict = extract_frames_single_file(file_)
+            mean = calculate_mean(t_dict)
+            mean_all.append(mean)
+
+            header_all.append(file_[-21:])
+        
+        result = np.array(mean_all)
+
+        save_csv(dir_out, header_all, result)
+
+
+    print("\nTotal time required(sec): ", time.time() - start_1)
