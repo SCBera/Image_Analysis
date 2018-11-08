@@ -107,7 +107,16 @@ def save_csv(dir_out, files, result):
         print("Existing csv file is not accessible!")
         exit()
 
-def mean_auto(info_file = 'info.txt'):
+
+if __name__ == "__main__":
+
+    if len(argv) < 2:
+        print("Please specify arguments: '-a' for auto, '-m' for manual.")
+        exit()
+
+    elif argv[1] == '-a':
+        start_1 = time.time()
+
         info_file = open('info.txt')
         for line in info_file:
 
@@ -132,24 +141,12 @@ def mean_auto(info_file = 'info.txt'):
                 header_all.append(file_[-21:])
             result = np.array(mean_all).T
 
-            save_csv(dir_out, header_all, result)
-        print("\nTime required(sec): ", time.time() - start_2)
-         
+            save_csv(dir_out, header_all, result)            
+       
+            print("\nTime required(sec): ", time.time() - start_2)
+           
 
-
-
-if __name__ == "__main__":
-
-    if len(argv) < 2:
-        print("Please specify arguments: '-am' for auto-mean, '-mm' for manual-mean.")
-        exit()
-
-    elif argv[1] == '-am':
-        start_1 = time.time()       
-
-        mean_auto()
-
-    elif argv[1] == '-mm':
+    elif argv[1] == '-m':
         dir_ = get_dir(input("Directory>"))
         # t = int(input("Time point/interval>"))
 
