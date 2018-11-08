@@ -53,8 +53,8 @@ def get_dir(dir_in):
 def make_dir_out(dir_in):
     """This makes a new directory '_out' inside the given path."""
     try:
-        os.makedirs(dir_ + '_out\\', exist_ok=True)
-        dir_out = (dir_ + '_out\\')
+        os.makedirs(dir_in + '_out\\', exist_ok=True)
+        dir_out = (dir_in + '_out\\')
         return dir_out
     except:
         raise IOError(f"Unable to make new directory: {dir_in}")
@@ -107,25 +107,19 @@ def save_csv(dir_out, files, result):
         print("Existing csv file is not accessible!")
         exit()
 
-
-if __name__ == "__main__":
-
-    if len(argv) < 2:
-        print("Please specify arguments: '-a' for auto, '-m' for manual.")
-        exit()
-
-    elif argv[1] == '-a':
-        start_1 = time.time()
-
+def list_mean_auto(info_file = 'info.txt'):
         info_file = open('info.txt')
         for line in info_file:
 
             start_2 = time.time()
 
             # line = line.split(',')
-            dir_ = get_dir(line[:-1])
+            dir_ = line[:-1]+'\\'
+            # dir_ = get_dir(line[:-1])
             # t = int(line[1])
-            list_of_files = get_filelist(dir_)
+            # list_of_files = get_filelist(dir_)
+            list_of_files = glob.glob(dir_ + '*.tif')
+
             
             print(f"\nReading {len(list_of_files)} files from '{dir_[-50:]}'\n")
 
@@ -141,17 +135,16 @@ if __name__ == "__main__":
                 header_all.append(file_[-21:])
             result = np.array(mean_all).T
 
-            save_csv(dir_out, header_all, result)            
-       
-            print("\nTime required(sec): ", time.time() - start_2)
-           
+            save_csv(dir_out, header_all, result)
+        print("\nTime required(sec): ", time.time() - start_2)
+         
 
-    elif argv[1] == '-m':
-        dir_ = get_dir(input("Directory>"))
+def list_mean_manual(dir_):
+        # dir_ = input("Directory>")+'\\'
+        # dir_ = get_dir(input("Directory>"))
         # t = int(input("Time point/interval>"))
 
-        start_1 = time.time()
-        list_of_files = get_filelist(dir_)
+        list_of_files = glob.glob(dir_+'*.tif')
 
         print(f"\nReading {len(list_of_files)} files...\n")
 
@@ -167,6 +160,24 @@ if __name__ == "__main__":
         result = np.array(mean_all).T
 
         save_csv(dir_out, header_all, result)
+
+
+
+
+if __name__ == "__main__":
+
+    if len(argv) < 2:
+        print("Please specify arguments: '-am' for auto-mean, '-mm' for manual-mean.")
+        exit()
+
+    elif argv[1] == '-am':
+        start_1 = time.time()     
+        list_mean_auto()
+
+    elif argv[1] == '-mm':    
+        dir_ = input("Directory>")+'\\'        
+        start_1 = time.time()
+        list_mean_manual(dir_)
 
 
     print("\nTotal time required(sec): ", time.time() - start_1)
