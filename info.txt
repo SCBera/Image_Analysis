@@ -1,4 +1,1 @@
-Z:\Subh@s\Real-time experiments\AB42-rec\2018-10-20_8-well_NaOH-stock_30min\ab42-rec_4uM-tht_1\Pos1_5.2uM-ab42-rec
-Z:\Subh@s\Real-time experiments\AB42-rec\2018-10-20_8-well_NaOH-stock_30min\ab42-rec_4uM-tht_1\Pos2_5.2uM-ab42-rec
-Z:\Subh@s\Real-time experiments\AB42-rec\2018-10-20_8-well_NaOH-stock_30min\ab42-rec_4uM-tht_1\Pos3_2.6uM-ab42-rec
-Z:\Subh@s\Real-time experiments\AB42-rec\2018-10-20_8-well_NaOH-stock_30min\ab42-rec_4uM-tht_1\Pos4_2.6uM-ab42-rec
+D:\Codes\Image_Analysis\Sample_stack
