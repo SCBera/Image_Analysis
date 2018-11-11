@@ -1,5 +1,5 @@
 """
-This code has the functions: get_filelist, get_frames, get_men, get_max
+This code has the functions: read_info, get_filelist, get_frames, get_men, get_max
 """
 from skimage import io
 import matplotlib.pyplot as plt
@@ -9,6 +9,14 @@ import glob
 import sys
 import psutil
 
+
+def read_info():
+    """..."""
+    info_file = open('info.txt')
+    for line in info_file:
+        line = line.split('\n')
+        t = int(line[1])
+    return line, t
 
 def get_filelist(dir_, filetype='*.tif'):
     """ This returns lists of files in the directory with given file formate (default is .tif) """
