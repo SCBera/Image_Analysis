@@ -10,13 +10,18 @@ import sys
 import psutil
 
 
-def read_info():
+def split_line(line):
     """..."""
-    info_file = open('info.txt')
-    for line in info_file:
-        line = line.split('\n')
-        t = int(line[1])
-    return line, t
+    if line.find(',') > -1:
+       line = line.split(',')
+    else:
+       line = line.split('\n')
+    # try:
+    #     t = int(line[1])
+    # except:
+    #     continue
+    # info_file.close()
+    return line
 
 def get_filelist(dir_, filetype='*.tif'):
     """ This returns lists of files in the directory with given file formate (default is .tif) """
