@@ -18,7 +18,7 @@ for line in info:
 
     mn_all = []
     mx_all = []
-    for file_ in filelists:
+    for file_ in filelists[:1]:
         # print(file_)
         dict_ = get_frames(file_)
         # print(len(dict_))
@@ -33,8 +33,8 @@ for line in info:
 results = [np.array(mn_all), np.array(mx_all)]
 
 
-print(results[1])
+# print(len(results[1]))
 
-show_plot(results[1])
+show_plot_multi(results[0])
 
 

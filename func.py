@@ -35,7 +35,7 @@ def get_frames(file_):
     """This reads a stack of images from a given file and returns dictionary of frames."""
     t_dict_single = {}
     stack = io.imread(file_)
-    # print("reading slices...with shape", len(stack.shape))
+    print("reading slices...from shape", stack.shape)
     if psutil.virtual_memory()[2] > 88: #this to avoid malfuntioning due to memory sortage of the computer
         print(f'Program quits for insufficient RAM! >88%!')
     elif len(stack.shape) < 3: # this analyzes the stack with shape: (y,x)
@@ -52,6 +52,7 @@ def get_frames(file_):
 def get_mean(imgfile):
     """Returns list of mean value(s) of each frame(s) of a given image/stack file"""
     meanlist = []
+    print("Listing mean values...")
     if len(imgfile) > 1:
         for slice_pos in imgfile:
             slice_ = np.array(imgfile[slice_pos])
@@ -63,6 +64,7 @@ def get_mean(imgfile):
 def get_max(imgfile):
     """Returns lists of max value(s) of each frame(s) of a given image/stack file"""
     maxlist = []
+    print('Listing max values...')
     if len(imgfile) > 1:
         for slice_pos in imgfile:
             slice_ = np.array(imgfile[slice_pos])
@@ -93,12 +95,24 @@ def save_csv(dir_out, file_names, result):
 
 def show_plot(results):
 
+    print('Ploting...')
+
     # x1 = results[0]
     y1 = results[0]
     y2 = results[1]
     # plt.plot(x1, y1, 'ro')
     plt.plot(y1, 'ro')
     plt.plot(y2, "bs")
+    plt.show()
+
+def show_plot_multi(results):
+
+    print('Ploting...')
+
+    for n in range(len(results)):
+        y = results[n]
+        # plt.plot(x1, y1, 'ro')
+        plt.plot(y, 'ro')
     plt.show()
 
 def plot_save_fig(results): #dir_out, no_of_files, results

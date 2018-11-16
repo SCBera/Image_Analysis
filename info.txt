@@ -1,2 +1,1 @@
-D:\Codes\Image_Analysis\Sample_stack
-D:\Codes\Image_Analysis\Sample_stack,10
+Z:\_TIRFM_Data\Subhas\Real-time experiments\AB42-rec\2018-11-14_4-well_NW-stock_Conc-dep\ab42-tht_30min-intrvl_1
