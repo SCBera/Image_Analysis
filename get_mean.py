@@ -8,22 +8,16 @@ Save them in a separate folder inside destination folder.
 
 
 Inputs requires during run:
-script -a for automatic mode which will read files and time interval from info.txt file
-script -m for manual input of directory and time interval
+script -am for automatic mode which will read files and time interval from info.txt file
+script -mm for manual input of directory and time interval
 
 The code is mostly adopted from:http://www.bioimgtutorials.com/2016/08/03/creating-a-z-stack-in-python/
 Runs in 64bit environment with Python3 (64bit), scikit image, numpy, psutil, math, glob, matplotlib.pyplot
-Author: Subhas Ch Bera (and Kesavan)
+Author: Subhas Ch Bera (suggested by Kesavan)
 Created on Tue Sep 18 09:02:20 2018
 Last updated: 28 September, 2018
 
 """
-
-# To Do:
-# 1. Use decorators to decorate functions that need to raise IOError.
-# 2. Matplotlib, use the fig, ax syntax. Not the plt state function.
-# 3. Rewrite the part of the code that requires empty array creation - instead append to a list and convert into an array.
-# 4. Input method should be fully automated
 
 from skimage import io
 from sys import argv
