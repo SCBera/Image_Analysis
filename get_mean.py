@@ -57,6 +57,7 @@ def make_dir_out(dir_in):
 def get_filelist(dir_, filetype='*.tif'):
     """This gets the lists of files in the directory given"""
     files = glob.glob(dir_ + filetype)
+    print('Returning all files!')
     # return files[1:] # returns fileslist except the 1st file
     return files
 
@@ -78,13 +79,22 @@ def extract_frames_single_file(file_):
     else: # this analyzes the stack with shape: (z,y,x)
         for slice_t in range(stack.shape[0]):
                 t_dict_single[slice_t] = [stack[slice_t]]
-
+    # print(type(t_dict_single[0]))
     return t_dict_single
+
+def append_dict(t_dict_1, t_dict_2):
+    for t in t_dict_1:
+        t_dict_1[t].append(t_dict_2[t][0])
+    print(t_dict_1[0])
+    return t_dict_1
+    
 
 def z_project_frames(t_dict_dbl):
     t_dict_z_proj = {}
-    for t in t_dict_dbl:
+    for t in range(len(t_dict_dbl)):
         new_stack_t = np.array(t_dict_dbl[t])
+        # new_stack_t = t_dict_dbl[t]
+        print(type(new_stack_t), new_stack_t.shape)
 
         max_of_stacks = np.max(new_stack_t, axis = 0)
         # mean_of_stacks = np.mean(new_stack_t, axis = 0).astype(float) # converts int/float array to float or trancated int (eg., 2.9 to 2)
@@ -98,6 +108,7 @@ def calculate_mean(t_dict):
     mean = []
     for t in t_dict:
         slice_ = np.array(t_dict[t])
+        # print(type(t_dict[t]))
         # slice_ = np.array(t_dict[t]).astype(float)
         mean.append(slice_.mean())
     return mean
@@ -133,11 +144,23 @@ def list_mean_auto(info_file = 'info.txt'):
 
             mean_all = []
             header_all = []
+            counter = 0
             for file_ in list_of_files:
+                counter += 1
                 t_dict = extract_frames_single_file(file_)
                 mean = calculate_mean(t_dict)
                 mean_all.append(mean)
                 header_all.append(file_[-21:])
+
+                
+                if counter > 1:
+                    t_dict_2 = t_dict
+                    t_dict_dbl  = append_dict(t_dict_1, t_dict_2)
+                    # print(t_dict_dbl)
+                    t_dict_1 = z_project_frames(t_dict_dbl)
+                else:
+                    t_dict_1 = t_dict
+                
             result = np.array(mean_all).T
 
             save_csv(dir_out, header_all, result)
