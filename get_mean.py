@@ -81,6 +81,17 @@ def extract_frames_single_file(file_):
 
     return t_dict_single
 
+def z_project_frames(t_dict_dbl):
+    t_dict_z_proj = {}
+    for t in t_dict_dbl:
+        new_stack_t = np.array(t_dict_dbl[t])
+
+        max_of_stacks = np.max(new_stack_t, axis = 0)
+        # mean_of_stacks = np.mean(new_stack_t, axis = 0).astype(float) # converts int/float array to float or trancated int (eg., 2.9 to 2)
+
+        t_dict_z_proj[t] = max_of_stacks
+    return t_dict_z_proj
+
 
 def calculate_mean(t_dict):
     """Reads frames and returns a list of mean intensity values"""
