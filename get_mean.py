@@ -85,21 +85,21 @@ def extract_frames_single_file(file_):
 def append_dict(t_dict_1, t_dict_2):
     for t in t_dict_1:
         t_dict_1[t].append(t_dict_2[t][0])
-    print(t_dict_1[0])
+    # print(t_dict_1[0])
     return t_dict_1
     
 
 def z_project_frames(t_dict_dbl):
     t_dict_z_proj = {}
     for t in range(len(t_dict_dbl)):
-        new_stack_t = np.array(t_dict_dbl[t])
+        new_stack_t = t_dict_dbl[t]
         # new_stack_t = t_dict_dbl[t]
-        print(type(new_stack_t), new_stack_t.shape)
 
         max_of_stacks = np.max(new_stack_t, axis = 0)
         # mean_of_stacks = np.mean(new_stack_t, axis = 0).astype(float) # converts int/float array to float or trancated int (eg., 2.9 to 2)
-
         t_dict_z_proj[t] = max_of_stacks
+    print(max_of_stacks.shape, t_dict_z_proj)
+
     return t_dict_z_proj
 
 
